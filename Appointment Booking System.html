@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Appointment Booking System</title>
+
+<style>
+:root{
+  --primary:#2563eb;
+  --danger:#dc2626;
+  --light:#f3f4f6;
+  --dark:#111827;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Segoe UI',sans-serif;
+}
+
+body{
+  background:var(--light);
+  padding:20px;
+}
+
+.container{
+  max-width:900px;
+  margin:auto;
+  background:white;
+  padding:25px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+h2{
+  margin-bottom:20px;
+  color:var(--dark);
+}
+
+/* Form */
+.form{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:15px;
+  margin-bottom:25px;
+}
+
+input, select{
+  padding:10px;
+  border:1px solid #ddd;
+  border-radius:6px;
+}
+
+button{
+  padding:10px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.add-btn{
+  background:var(--primary);
+  color:white;
+}
+
+/* Appointment Cards */
+.appointments{
+  display:grid;
+  gap:15px;
+}
+
+.card{
+  background:#f9fafb;
+  padding:15px;
+  border-radius:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.delete-btn{
+  background:var(--danger);
+  color:white;
+}
+
+/* Responsive */
+@media(max-width:768px){
+
+.card{
+  flex-direction:column;
+  align-items:flex-start;
+  gap:10px;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>📅 Appointment Booking System</h2>
+
+<div class="form">
+
+<input type="text" id="name" placeholder="Your Name">
+
+<select id="service">
+  <option value="Doctor Consultation">Doctor Consultation</option>
+  <option value="Salon Appointment">Salon Appointment</option>
+  <option value="Business Meeting">Business Meeting</option>
+</select>
+
+<input type="date" id="date">
+
+<input type="time" id="time">
+
+<button class="add-btn" onclick="bookAppointment()">
+Book Appointment
+</button>
+
+</div>
+
+<div class="appointments" id="appointmentList"></div>
+
+</div>
+
+<script>
+
+let appointments =
+JSON.parse(localStorage.getItem("appointments")) || [];
+
+function saveData(){
+
+localStorage.setItem(
+"appointments",
+JSON.stringify(appointments)
+);
+
+}
+
+function bookAppointment(){
+
+const name =
+document.getElementById("name").value;
+
+const service =
+document.getElementById("service").value;
+
+const date =
+document.getElementById("date").value;
+
+const time =
+document.getElementById("time").value;
+
+if(!name || !date || !time) return;
+
+appointments.push({
+name,
+service,
+date,
+time
+});
+
+saveData();
+renderAppointments();
+
+document.getElementById("name").value="";
+document.getElementById("date").value="";
+document.getElementById("time").value="";
+
+}
+
+function deleteAppointment(index){
+
+appointments.splice(index,1);
+
+saveData();
+renderAppointments();
+
+}
+
+function renderAppointments(){
+
+const list =
+document.getElementById("appointmentList");
+
+list.innerHTML="";
+
+appointments.forEach((app,index)=>{
+
+list.innerHTML += `
+<div class="card">
+
+<div>
+<h3>${app.name}</h3>
+<p>${app.service}</p>
+<p>📅 ${app.date} ⏰ ${app.time}</p>
+</div>
+
+<button class="delete-btn"
+onclick="deleteAppointment(${index})">
+Delete
+</button>
+
+</div>
+`;
+
+});
+
+}
+
+renderAppointments();
+
+</script>
+
+</body>
+</html>
